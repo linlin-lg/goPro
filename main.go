@@ -78,10 +78,8 @@ func main() {
 	//startGinServer()
 	//startTlsServer()
 	//startGprcServer()
-
-	str := AuthSign("kpl-2024:2:5.15.0.3:98:14c15b0eb35bce4c97876e44247351a6d42bc807:0")
-
-	fmt.Println(str)
+	//str := AuthSign("kpl-2024:2:5.15.0.3:98:14c15b0eb35bce4c97876e44247351a6d42bc807:0")
+	//fmt.Println(str)
 }
 
 func luint32(b []byte) uint32 {
