@@ -2,6 +2,7 @@ package main
 
 import (
 	"GolandPro/Connect"
+	"GolandPro/api"
 	"GolandPro/proto"
 	"GolandPro/server"
 	"GolandPro/storage"
@@ -9,6 +10,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -19,6 +21,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 var (
@@ -80,6 +85,9 @@ func main() {
 	//startGprcServer()
 	//str := AuthSign("kpl-2024:2:5.15.0.3:98:14c15b0eb35bce4c97876e44247351a6d42bc807:0")
 	//fmt.Println(str)
+
+	// 启动API服务
+	startAPIServer()
 }
 
 func luint32(b []byte) uint32 {
@@ -331,7 +339,7 @@ func startGinServer() {
 	//	fmt.Println("userName = %s, userId = %s", userName, userId)
 	//	returnSuccess(c, 200, nil)
 	//})
-	r.Run(":8888")
+	r.Run(":8889")
 }
 
 func returnSuccess(g *gin.Context, code int, items interface{}) {
@@ -361,4 +369,58 @@ type JsonStruct struct {
 	Code  int         `json:"code"`
 	Msg   string      `json:"msg"`
 	Items interface{} `json:"items"`
+}
+
+// startAPIServer 启动API服务
+func startAPIServer() {
+	// 解析命令行参数
+	var (
+		configPath = flag.String("config", "", "配置文件路径")
+		port       = flag.String("port", "8080", "服务端口")
+		host       = flag.String("host", "127.0.0.1", "服务主机")
+	)
+	flag.Parse()
+
+	// 加载配置
+	var config *api.Config
+	var err error
+
+	if *configPath != "" {
+		config, err = api.LoadConfig(*configPath)
+		if err != nil {
+			log.Printf("Failed to load config from file: %v", err)
+			log.Println("Using default configuration")
+			config = api.DefaultConfig()
+		}
+	} else {
+		// 尝试从环境变量加载配置
+		config = api.GetEnvConfig()
+	}
+
+	// 覆盖命令行参数
+	if *port != "8080" {
+		config.Server.Port = *port
+	}
+	if *host != "127.0.0.1" {
+		config.Server.Host = *host
+	}
+
+	// 创建API服务器
+	server := api.NewAPIServer(config.Server.Port)
+
+	// 启动服务器
+	go func() {
+		log.Printf("Starting API server on %s:%s", config.Server.Host, config.Server.Port)
+		if err := server.Start(); err != nil {
+			log.Fatalf("Failed to start server: %v", err)
+		}
+	}()
+
+	// 等待中断信号
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down API server...")
+	fmt.Println("API server stopped")
 }
