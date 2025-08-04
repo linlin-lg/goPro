@@ -1,0 +1,6 @@
+{"level":"error","ts":1648027428.6961558,"msg":"error = 213.233.232.333"}
+2022/03/24 10:05:58 error --- 34fdfdfdflkj
+{"lever":"info","time":"2022-03-24T10:31:33.527+0800","caller":"/Users/kplios/Desktop/GolandPro/log/log.go:42","key":"32434"}
+{"lever":"info","time":"2022-03-24T10:38:54.772+0800","caller":"/Users/kplios/Desktop/GolandPro/log/log.go:42","key":"32434"}
+{"lever":"error","time":"2022-03-24T10:38:54.773+0800","caller":"/Users/kplios/Desktop/GolandPro/log/log.go:43","key":"32434","stacktraceKey":"GolandPro/log.InitLog\n\t/Users/kplios/Desktop/GolandPro/log/log.go:43\nmain.main\n\t/Users/kplios/Desktop/GolandPro/main.go:7\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:255"}
+{"lever":"info","time":"2022-03-24T17:04:35.196+0800","key":"32434"}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./";
+
+
+// 定义HelloRequest消息
+message HelloRequest {
+  // name字段
+  string name = 1;
+}
+
+// 定义HelloReply消息
+message HelloReply {
+  // message字段
+  string message = 1;
+}
+
+service OrderManagement {
+  rpc ProcessOrders(HelloRequest) returns (HelloReply);
+}
